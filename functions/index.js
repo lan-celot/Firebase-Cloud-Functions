@@ -1,22 +1,22 @@
 /**
  * Firebase Cloud Functions - Main Entry Point
- * 
- * This file exports all Cloud Functions for deployment
  */
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 
-// Import all your function modules
-const rickRollAuthTriggers = require('./triggers/auth/rickRollAuthTrigger');
-const rickRollHTTP = require('./triggers/http/rickRollCallable');
+// Initialize Firebase Admin
+admin.initializeApp();
 
-// Export Auth Triggers
-exports.logNewUserRickRoll = rickRollAuthTriggers.logNewUserRickRoll;
-exports.logUserDeletedRickRoll = rickRollAuthTriggers.logUserDeletedRickRoll;
+// Import event functions
+const eventFunctions = require('./src/triggers/http/eventCallable');
 
-// Export HTTP Functions
-exports.rickRoll = rickRollHTTP.rickRoll;
+// Export HTTP Functions with region specification
+exports.createEvent = functions
+  .region('asia-southeast1')
+  .https.onRequest(eventFunctions.createEvent);
 
-// You can add more functions as you develop them
-// Example:
-// exports.anotherFunction = require('./path/to/file').functionName;
+exports.getEvents = functions
+  .region('asia-southeast1')
+  .https.onRequest(eventFunctions.getEvents);
 
 console.log('Firebase Functions initialized');

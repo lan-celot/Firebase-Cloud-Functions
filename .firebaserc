@@ -1,1 +1,7 @@
-{}
+{
+  "projects": {
+    "staging": "evntgarde-event-management"
+  },
+  "targets": {},
+  "etags": {}
+}
