@@ -18,7 +18,10 @@ const functionConfig = {
 
 // Export HTTP Functions with region specification and options
 exports.createEvent = onRequest(functionConfig, eventFunctions.createEvent);
+// ...existing code...
 
-exports.getEvents = onRequest(functionConfig, eventFunctions.getEvents);
-
+// Export HTTP Functions with region specification and options
+exports.createEvent = onRequest(functionConfig, eventFunctions.createEvent);
+exports.getCampusEvents = onRequest(functionConfig, eventFunctions.getCampusEvents);
+exports.getChurchEvents = onRequest(functionConfig, eventFunctions.getChurchEvents);
 console.log('Firebase Functions initialized');

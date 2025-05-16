@@ -67,8 +67,10 @@ exports.createEvent = functions.https.onRequest((req, res) => {
   }
 });
 
-exports.getEvents = functions.https.onRequest(async (req, res) => {
-  console.log('getEvents function called');
+// ...existing code...
+
+exports.getCampusEvents = functions.https.onRequest(async (req, res) => {
+  console.log('getCampusEvents function called');
 
   if (req.method !== 'GET') {
     return res.status(405).json({
@@ -80,8 +82,7 @@ exports.getEvents = functions.https.onRequest(async (req, res) => {
   try {
     const client = await pool.connect();
     
-    // Modified query to select only specific columns
-    const query = `
+    const queryCampus = `
       SELECT 
         event_id,
         event_name,
@@ -98,10 +99,61 @@ exports.getEvents = functions.https.onRequest(async (req, res) => {
         event_status,
         ispackage
       FROM events
-      WHERE organizer_id = 1000 || organizer_id = 10001
+      WHERE organizer_id = 1000
     `;
     
-    const result = await client.query(query);
+    const result = await client.query(queryCampus);
+    client.release();
+
+    return res.status(200).json({
+      success: true,
+      data: result.rows
+    });
+
+  } catch (error) {
+    console.error('Error details:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      details: error.message
+    });
+  }
+});
+
+exports.getChurchEvents = functions.https.onRequest(async (req, res) => {
+  console.log('getChurchEvents function called');
+
+  if (req.method !== 'GET') {
+    return res.status(405).json({
+      success: false,
+      error: 'Method not allowed'
+    });
+  }
+
+  try {
+    const client = await pool.connect();
+    
+    const queryChurch = `
+      SELECT 
+        event_id,
+        event_name,
+        event_type_id,
+        event_desc,
+        start_date,
+        end_date,
+        start_time,
+        end_time,
+        location as event_location,
+        organizer_id,
+        vendor_id,
+        customer_id,
+        event_status,
+        ispackage
+      FROM events
+      WHERE organizer_id = 10001
+    `;
+    
+    const result = await client.query(queryChurch);
     client.release();
 
     return res.status(200).json({
