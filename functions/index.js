@@ -1,22 +1,24 @@
-/**
- * Firebase Cloud Functions - Main Entry Point
- */
-const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const { onRequest } = require('firebase-functions/v2/https');
+const { defineString } = require('firebase-functions/params');
+const { initializeApp } = require('firebase-admin/app');
 
 // Initialize Firebase Admin
-admin.initializeApp();
+initializeApp();
 
 // Import event functions
 const eventFunctions = require('./src/triggers/http/eventCallable');
 
-// Export HTTP Functions with region specification
-exports.createEvent = functions
-  .region('asia-southeast1')
-  .https.onRequest(eventFunctions.createEvent);
+// Common configuration options
+const functionConfig = {
+  timeoutSeconds: 300,
+  memory: '256MB',
+  region: 'asia-southeast1'
+};
 
-exports.getEvents = functions
-  .region('asia-southeast1')
-  .https.onRequest(eventFunctions.getEvents);
+// Export HTTP Functions with region specification and options
+exports.createEvent = onRequest(functionConfig, eventFunctions.createEvent);
+
+exports.getEvents = onRequest(functionConfig, eventFunctions.getEvents);
 
 console.log('Firebase Functions initialized');

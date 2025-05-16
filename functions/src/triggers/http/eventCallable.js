@@ -98,6 +98,7 @@ exports.getEvents = functions.https.onRequest(async (req, res) => {
         event_status,
         ispackage
       FROM events
+      WHERE organizer_id = 1000 || organizer_id = 10001
     `;
     
     const result = await client.query(query);
