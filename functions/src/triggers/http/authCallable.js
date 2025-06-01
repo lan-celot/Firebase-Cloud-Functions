@@ -489,11 +489,12 @@ exports.syncUser = functions.https.onRequest((req, res) => {
 
 // ... existing imports and code ...
 
-exports.getRole = functions.region('asia-southeast1').https.onCall(async (data, context) => {
-  const { firebaseUid } = data;
+// Update the getRole function to use the correct Firebase Functions v2 syntax
+exports.getRole = functions.https.onCall(async (request) => {
+  const { firebaseUid } = request.data;
   
   if (!firebaseUid) {
-    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with firebaseUid.');
+    throw new Error('The function must be called with firebaseUid.');
   }
 
   try {
@@ -520,13 +521,9 @@ exports.getRole = functions.region('asia-southeast1').https.onCall(async (data, 
       return { roleId: result.rows[0].role_id };
     }
     
-    throw new functions.https.HttpsError('not-found', 'Role not found');
+    throw new Error('Role not found');
   } catch (error) {
     console.error('Error getting role:', error);
-    throw new functions.https.HttpsError(
-      'internal',
-      'Failed to get user role',
-      error
-    );
+    throw new Error('Failed to get user role');
   }
-});
+}); 
